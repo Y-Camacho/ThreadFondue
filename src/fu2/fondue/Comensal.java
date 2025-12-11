@@ -5,30 +5,57 @@ public class Comensal implements Runnable {
 	private String nom;
 	private int temsMenjant;
 	private int puntPreferent;
+	private int porcionsMenjades;
 	private Fondue fondue;
 	
-	public Comensal(int punt, String nom) {
+	public Comensal(Fondue fon, int punt, String nom) {
 		Thread.currentThread().setName(nom);
 		this.nom = nom;
 		this.temsMenjant = 2;
+		this.porcionsMenjades = 0;
 		this.puntPreferent = punt;
+		this.fondue = fon;
 	}
 	
-	private void Cuinar() {
-		fondue.cuinar(temsMenjant, this);
+	private void Cuinar() {		
+		try {
+			
+			fondue.agafarForquilla(this);
+			
+			System.out.println(this.getNom() + " está cuinando ...");
+			Thread.sleep(puntPreferent * 1000);
+			System.out.println(this.getNom() + " a cacabat de cuinar.");
+			
+			fondue.deixarForquilla(this);
+			System.out.println(getNom() + " ha deixat la seva forquilla.");
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	private void Menjar() {
-		fondue.mengar(puntPreferent, this);
+		try {
+			
+			System.out.println(this.getNom() + " está menjant ...");
+			Thread.sleep(temsMenjant * 1000);
+			this.porcionsMenjades++;
+			System.out.println(this.getNom() + " ha acabat de menjar - " + porcionsMenjades);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void run() {
 		
-		Cuinar();
-		Menjar();
-		
-		System.out.println(getNom() + " ha deixat la seva forquilla.");
+		while ( true ) {
+			Cuinar();
+			Menjar();
+		}
 	}
 
 	// ---- 
@@ -59,5 +86,4 @@ public class Comensal implements Runnable {
 	public void setFondue(Fondue fondue) {
 		this.fondue = fondue;
 	}
-	
 }
